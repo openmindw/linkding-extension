@@ -10,7 +10,6 @@ export class Options extends LitElement {
     unreadSelected: { type: Boolean, state: true },
     shareSelected: { type: Boolean, state: true },
     useBrowserMetadata: { type: Boolean, state: true },
-    runSinglefile: { type: Boolean, state: true },
     precacheEnabled: { type: Boolean, state: true },
     closeAddBookmarkWindowOnSave: { type: Boolean, state: true },
     closeAddBookmarkWindowOnSaveMs: { type: Number, state: true },
@@ -26,7 +25,6 @@ export class Options extends LitElement {
     this.unreadSelected = false;
     this.shareSelected = false;
     this.useBrowserMetadata = false;
-    this.runSinglefile = false;
     this.precacheEnabled = false;
     this.closeAddBookmarkWindowOnSave = false;
     this.closeAddBookmarkWindowOnSaveMs = 500;
@@ -53,7 +51,6 @@ export class Options extends LitElement {
     this.unreadSelected = config.unreadSelected;
     this.shareSelected = config.shareSelected;
     this.useBrowserMetadata = config.useBrowserMetadata;
-    this.runSinglefile = config.runSinglefile;
     this.precacheEnabled = config.precacheEnabled;
     this.closeAddBookmarkWindowOnSave = config.closeAddBookmarkWindowOnSave;
     this.closeAddBookmarkWindowOnSaveMs = config.closeAddBookmarkWindowOnSaveMs;
@@ -68,7 +65,6 @@ export class Options extends LitElement {
       unreadSelected: this.unreadSelected,
       shareSelected: this.shareSelected,
       useBrowserMetadata: this.useBrowserMetadata,
-      runSinglefile: this.runSinglefile,
       precacheEnabled: this.precacheEnabled,
       closeAddBookmarkWindowOnSave: this.closeAddBookmarkWindowOnSave,
       closeAddBookmarkWindowOnSaveMs: this.closeAddBookmarkWindowOnSaveMs,
@@ -203,33 +199,6 @@ export class Options extends LitElement {
             gives better results for websites that use bot detection or require
             login, but can give worse results for websites that don't properly
             update the page title or description while browsing.
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-checkbox">
-            <input
-              type="checkbox"
-              .checked="${this.runSinglefile}"
-              @change="${(e) => this.handleInputChange(e, "runSinglefile")}"
-            />
-            <i class="form-icon"></i>
-            <span>Run Singlefile after adding new bookmark</span>
-          </label>
-          <div class="form-input-hint">
-            Run the Singlefile extension on the current tab after adding a new
-            bookmark. This will save the current page as a single HTML file and
-            attach it as snapshot to the bookmark.
-            <br />
-            <br />
-            <strong>Note:</strong> This requires having the Singlefile extension
-            installed in your browser, and the extension must be configured to
-            upload HTML files to the respective linkding REST API endpoint. You
-            also need at least version 1.39.0 of the linkding server. See the
-            <a href="https://linkding.link/archiving/" target="_blank"
-              >documentation</a
-            >
-            for more information.
           </div>
         </div>
 
