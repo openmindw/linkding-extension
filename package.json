@@ -1,6 +1,7 @@
 {
   "name": "linkding-extension",
   "version": "1.14.0",
+  "type": "module",
   "description": "Companion extension for the linkding bookmark service",
   "license": "MIT",
   "author": "Sascha Ißbrücker",
