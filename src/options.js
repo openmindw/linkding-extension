@@ -206,6 +206,7 @@ export class Options extends LitElement {
           </div>
         </div>
 
+        <!-- Temporarily commented out - moved to popup for per-bookmark selection
         <div class="form-group">
           <label class="form-checkbox">
             <input
@@ -232,6 +233,7 @@ export class Options extends LitElement {
             for more information.
           </div>
         </div>
+        -->
 
         <div class="form-group">
           <label class="form-checkbox">

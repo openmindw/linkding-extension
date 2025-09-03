@@ -25,6 +25,7 @@ export class PopupForm extends LitElement {
     autoTags: { type: String, state: true },
     unread: { type: Boolean, state: true },
     shared: { type: Boolean, state: true },
+    runSinglefile: { type: Boolean, state: true },
     saveState: { type: String, state: true },
     errorMessage: { type: String, state: true },
     availableTagNames: { type: Array, state: true },
@@ -50,6 +51,7 @@ export class PopupForm extends LitElement {
     this.autoTags = "";
     this.unread = false;
     this.shared = false;
+    this.runSinglefile = false;
     this.saveState = "";
     this.errorMessage = "";
     this.availableTagNames = [];
@@ -111,18 +113,25 @@ export class PopupForm extends LitElement {
     this.loading = true;
 
     const [serverMetadata, browserMetadata] = await Promise.all([
-      loadServerMetadata(this.url),
-      getBrowserMetadata(this.url),
+      loadServerMetadata(this.url).catch(error => {
+        console.warn("Failed to load server metadata:", error);
+        return null;
+      }),
+      getBrowserMetadata(this.url).catch(error => {
+        console.warn("Failed to load browser metadata:", error);
+        return { title: "", description: "" };
+      }),
     ]);
 
     this.loading = false;
 
+    // Use browser metadata as primary source, fallback to server metadata
     if (this.configuration.useBrowserMetadata) {
-      this.title = browserMetadata.title;
-      this.description = browserMetadata.description;
+      this.title = browserMetadata?.title || serverMetadata?.metadata?.title || this.tabInfo.title || "";
+      this.description = browserMetadata?.description || serverMetadata?.metadata?.description || "";
     } else {
-      this.title = serverMetadata.metadata.title;
-      this.description = serverMetadata.metadata.description;
+      this.title = serverMetadata?.metadata?.title || browserMetadata?.title || this.tabInfo.title || "";
+      this.description = serverMetadata?.metadata?.description || browserMetadata?.description || "";
     }
 
     this.shared = this.configuration.shareSelected;
@@ -175,7 +184,7 @@ export class PopupForm extends LitElement {
       this.saveState = "loading";
 
       await this.api.saveBookmark(bookmark, {
-        disable_html_snapshot: this.extensionConfiguration?.runSinglefile,
+        disable_html_snapshot: this.runSinglefile,
       });
       await clearCachedServerMetadata();
 
@@ -198,8 +207,8 @@ export class PopupForm extends LitElement {
         }, this.extensionConfiguration?.closeAddBookmarkWindowOnSaveMs);
       }
 
-      // Run singlefile, if configured
-      if (!this.bookmarkExists && this.extensionConfiguration?.runSinglefile) {
+      // Run singlefile, if enabled for this bookmark
+      if (!this.bookmarkExists && this.runSinglefile) {
         runSinglefile();
       }
     } catch (e) {
@@ -368,6 +377,17 @@ export class PopupForm extends LitElement {
                 </label>
               `
             : ""}
+        </div>
+        <div class="form-group">
+          <label class="form-checkbox">
+            <input
+              type="checkbox"
+              .checked="${this.runSinglefile}"
+              @change="${(e) => this.handleInputChange(e, "runSinglefile")}"
+            />
+            <i class="form-icon"></i>
+            <span>Run Singlefile after saving</span>
+          </label>
         </div>
         <div class="footer">
           ${this.saveState === "success"
